@@ -90,6 +90,26 @@ result.push_back(solution.x[delta_start + latency_iter])
 ```
 
 
+## Misc
+
+To handle repeated restarts and compilation a couple of utilities are developed to make the process smooth and fast.
+
+update_params utility allows setting the gain parameters on the go while the controller and simulator are running.
+
+```
+./update_params -c 1500 -e 3000 -v 0.14 -d 30000 -a 80 -p 290 -q 50;
+-c -- cte gain param
+-e -- epsi gain param
+-v -- velocity error gain param
+-d -- delta gain param
+-a -- acceleration gain parameter
+-p -- d_delta gain parameter
+-q -- d_a gain parameter
+```
+
+
+./restart_game
+
 ---
 
 ## Dependencies
