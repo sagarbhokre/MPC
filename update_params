@@ -1,0 +1,28 @@
+#!/bin/bash
+
+g++ -std=c++11 param_writer.cpp -o param_writer
+
+c="default"
+e="default"
+v="default"
+d="default"
+a="default"
+p="default"
+q="default"
+
+while getopts 'c:e:v:d:a:p:q:' opt; do
+    case $opt in
+        c)  c="$OPTARG" ;;
+        e)  e="$OPTARG" ;;
+        v)  v="$OPTARG" ;;
+        d)  d="$OPTARG" ;;
+        a)  a="$OPTARG" ;;
+        p)  dd="$OPTARG" ;;
+        q)  da="$OPTARG" ;;
+        *)  exit 1       ;;
+    esac
+done
+
+echo "c = '${c}' e = '${e}' v = '${v}' d = '${d}' a = '${a}' dd = '${dd}' da = '${da}'"
+
+./param_writer ${c} ${e} ${v} ${d} ${a} ${dd} ${da}
