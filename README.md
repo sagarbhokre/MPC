@@ -4,6 +4,30 @@ Self-Driving Car Engineer Nanodegree Program
 ## Implementation details
 The controller uses a predictive model to control the actuators inside the sdc simulator. Steering actuator and throttle actuator are computed using IpOpt module. The IpOpt module considers the current state and the coefficients to be fit while trying to reduce the cost values.
 
+
+Following is the sequence of events involved in computing the actuator control values:
+1. Convert coordinates from global space to local space, compute current state of the system
+2. Compute a 3rd degree polynomial coefficient set representing the path to be followed
+3. Set the lower and upper constraint bounds for state variables, actuator values
+4. Compute intermediate constraint values for state variables using update equations
+5. Compute the cost function depending on gain parameters set imperically
+6. Return the actuator and predicted positions back to the simulator
+
+#### Coordinate space conversion and polynomial fitting
+The coordinates returned by the simulator are global coordinates. These need to be converted to local coordinates. Following part of the code does the conversion:
+```
+for(unsigned int i=0; i < ptsx.size(); i++) {
+    double shift_x = ptsx[i] - px;
+    double shift_y = ptsy[i] - py;
+    ptsx[i] = shift_x*cos(0-psi) - shift_y*sin(0-psi);
+    ptsy[i] = shift_x*sin(0-psi) + shift_y*cos(0-psi);
+}
+```
+A 3rd order polynomial is fit on these local coordinates
+```
+auto coeffs = polyfit(ptsx2, ptsy2, 3);
+```
+
 State of the system is comprised of the following parameters:
 1. Current position x coordinate (px)
 2. Current position y coordinate (py)
@@ -12,6 +36,26 @@ State of the system is comprised of the following parameters:
 5. Cross track error (cte)
 6. Error in orientation (epsi)
 
+
+#### Computing intermediate constraint values
+Update equations used to set intermediate constraint values are as follows:
+
+```
+x_[t+1] = x[t] + v[t] * cos(psi[t]) * dt
+y_[t+1] = y[t] + v[t] * sin(psi[t]) * dt
+psi_[t+1] = psi[t] + v[t] / Lf * delta[t] * dt
+v_[t+1] = v[t] + a[t] * dt
+cte[t+1] = f(x[t]) - y[t] + v[t] * sin(epsi[t]) * dt
+epsi[t+1] = psi[t] - psides[t] + v[t] * delta[t] / Lf * dt
+```
+
+Other constraints set to enable the optimizer include the state variable value range, and actuator limitations.
+1. State variables are constrained to range of +/- 1.0e^19
+2. The steering values are constrained to a max of +/- 25 degrees
+3. Throttle actuators are constrained to a max of +/- 1
+
+
+#### Computing cost for optimization
 These values are computed while trying to optimize the cost function. The cost function is a weighted sum of the following parameters
 1. Cross track error (CTE)
 2. Deflection from expected orientation (epsi)
@@ -21,8 +65,29 @@ These values are computed while trying to optimize the cost function. The cost f
 6. Change in steering actuator values (d_delta)
 7. Change in throttle actuator values (d_a)
 
-Update equations used to set intermedia values are as follows:
+### Handling Latency
+To handle the latency involved in actuator controls taking effect, the delta and acceleration variables need to be constrained. 
 
+Snippet mentioned below computes iterations to be considered for constraining the parameters.
+```
+double latency = 0.10; //(sec)
+unsigned int latency_iter = latency/dt;
+```
+
+Following snippet constrains the delta parameter until the latency sets in.
+```
+if(i < delta_start + latency_iter) {
+    vars_lowerbound[i] = delta_prev;
+    vars_upperbound[i] = delta_prev;
+}
+```
+Similar change is implemented to constrain acceleration parameter. 
+
+Eventually, the actuator control value passed to the simulator is offset be the latency_iteration as shown below
+
+```
+result.push_back(solution.x[delta_start + latency_iter])
+```
 
 
 ---
