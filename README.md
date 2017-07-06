@@ -1,6 +1,30 @@
 # CarND-Controls-MPC
 Self-Driving Car Engineer Nanodegree Program
 
+## Implementation details
+The controller uses a predictive model to control the actuators inside the sdc simulator. Steering actuator and throttle actuator are computed using IpOpt module. The IpOpt module considers the current state and the coefficients to be fit while trying to reduce the cost values.
+
+State of the system is comprised of the following parameters:
+1. Current position x coordinate (px)
+2. Current position y coordinate (py)
+3. Current position orientation (psi)
+4. Current velocity (v)
+5. Cross track error (cte)
+6. Error in orientation (epsi)
+
+These values are computed while trying to optimize the cost function. The cost function is a weighted sum of the following parameters
+1. Cross track error (CTE)
+2. Deflection from expected orientation (epsi)
+3. Difference between current velocity and reference velocity (ev)
+4. Steering actuator value (delta)
+5. Throttle acutator value (a)
+6. Change in steering actuator values (d_delta)
+7. Change in throttle actuator values (d_a)
+
+Update equations used to set intermedia values are as follows:
+
+
+
 ---
 
 ## Dependencies
