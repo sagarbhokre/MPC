@@ -41,13 +41,13 @@ size_t a_start = delta_start + N - 1;
 // The reference velocity is set to 40 mph.
 double ref_v = 50;
 
-#define GAIN_C (800)
-#define GAIN_E (200)
-#define GAIN_V (1.25)
-#define GAIN_D (10)
-#define GAIN_A (5)
-#define GAIN_DD (200)
-#define GAIN_DA (15)
+#define GAIN_C (1500)
+#define GAIN_E (3000)
+#define GAIN_V (0.14)
+#define GAIN_D (30000)
+#define GAIN_A (80)
+#define GAIN_DD (290)
+#define GAIN_DA (50)
 
 static void read_params(double &gain_c, double &gain_e, double &gain_v, double &gain_d, double &gain_a, double &gain_dd, double &gain_da)
 {
@@ -170,17 +170,12 @@ class FG_eval {
       // cte[t+1] = f(x[t]) - y[t] + v[t] * sin(epsi[t]) * dt
       // epsi[t+1] = psi[t] - psides[t] + v[t] * delta[t] / Lf * dt
 
-      //cout << "X0, y0: " << x0 << ", " << y0 << endl;;
-      //cout << "X1, y1: " << x1 << ", " << y1 << endl;;
-
-      fg[1 + x_start + t] = x1 - (x0 + v0 * CppAD::cos(psi0) * dt);
-      fg[1 + y_start + t] = y1 - (y0 + v0 * CppAD::sin(psi0) * dt);
-      fg[1 + psi_start + t] = psi1 - (psi0 + v0 * delta0 / Lf * dt);
-      fg[1 + v_start + t] = v1 - (v0 + a0 * dt);
-      fg[1 + cte_start + t] =
-          cte1 - ((f0 - y0) + (v0 * CppAD::sin(epsi0) * dt));
-      fg[1 + epsi_start + t] =
-          epsi1 - ((psi0 - psides0) + v0 * delta0 / Lf * dt);
+      fg[1 + x_start + t]    = x1 - (x0 + v0 * CppAD::cos(psi0) * dt);
+      fg[1 + y_start + t]    = y1 - (y0 + v0 * CppAD::sin(psi0) * dt);
+      fg[1 + psi_start + t]  = psi1 - (psi0 + v0 * delta0 / Lf * dt);
+      fg[1 + v_start + t]    = v1 - (v0 + a0 * dt);
+      fg[1 + cte_start + t]  = cte1 - ((f0 - y0) + (v0 * CppAD::sin(epsi0) * dt));
+      fg[1 + epsi_start + t] = epsi1 - ((psi0 - psides0) + v0 * delta0 / Lf * dt);
     }
   }
 };
@@ -330,8 +325,12 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
 
   for(unsigned int t =0; t<N-1; t++) {
     result.push_back(solution.x[x_start + t + 1]);
+  }
+
+  for(unsigned int t =0; t<N-1; t++) {
     result.push_back(solution.x[y_start + t + 1]);
   }
+
 
   return result;
 }

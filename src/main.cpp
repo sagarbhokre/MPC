@@ -119,7 +119,6 @@ int main() {
 
           cout << "CTE: " << cte << " EPSI " << epsi << endl;
 
-
           /*
           * Calculate steering angle and throttle using MPC.
           *
@@ -141,13 +140,13 @@ int main() {
           vector<double> mpc_x_vals;
           vector<double> mpc_y_vals;
 
-          for(unsigned int i=2; i<vars.size(); i++) {
-            if(i%2 == 0) {
-              mpc_x_vals.push_back(vars[i]);
-            }
-            else {
-              mpc_y_vals.push_back(vars[i]);
-            }
+          unsigned int n = (vars.size() - 2)/2; // delta, a, xs, ... , ys , ...
+          for(unsigned int i=2; i<(2+n); i++) {
+            mpc_x_vals.push_back(vars[i]);
+          }
+
+          for(unsigned int i=2+n; i<vars.size(); i++) {
+            mpc_y_vals.push_back(vars[i]);
           }
 
           //.. add (x,y) points to list here, points are in reference to the vehicle's coordinate system
@@ -160,21 +159,11 @@ int main() {
           vector<double> next_x_vals;
           vector<double> next_y_vals;
 
-          /*
-          for (int i=0; i<RENDER_PTS; i++) {
-            double xs = 1*i;
-            next_x_vals.push_back(xs);
-            next_y_vals.push_back(polyeval(coeffs, xs));
-            cout << "x, y next: " << next_x_vals[i] << ", " << next_y_vals[i] << endl;
-          }*/
-          auto coeffs_gt = polyfit(ptsx2.head(3), ptsy2.head(3), 2);
-          cout << coeffs_gt << endl;
           for (unsigned int i=0; i<RENDER_PTS; i++) {
             double factor = 2.0;
             double xs = i*factor; //x + cos(deg2rad(psi))*factor*i;
             next_x_vals.push_back(xs);// - ptsx2[0]);
             next_y_vals.push_back(polyeval(coeffs, xs));// - ptsy2[0]));
-              //cout << "x, y next: " << next_x_vals[i] << ", " << next_y_vals[i] << endl;
           }
 
           //.. add (x,y) points to list here, points are in reference to the vehicle's coordinate system
@@ -182,7 +171,6 @@ int main() {
 
           msgJson["next_x"] = next_x_vals;
           msgJson["next_y"] = next_y_vals;
-
 
           auto msg = "42[\"steer\"," + msgJson.dump() + "]";
           std::cout << msg << std::endl;
