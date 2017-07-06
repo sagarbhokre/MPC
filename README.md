@@ -65,6 +65,17 @@ These values are computed while trying to optimize the cost function. The cost f
 6. Change in steering actuator values (d_delta)
 7. Change in throttle actuator values (d_a)
 
+### Setting N and dt values for the controller
+N parameter dictates the amount of iterations that the predictor would run to optimize actuator values. Larger the number, more would be the values considered while estimating the control parameters
+dt parameter decides how close in time the parameters are estimated. Smaller the time, closer would be the spacing and the model would be more accurate for estimates immediate in time.
+In an ideal situation the value of N should be very high and dt should be very low, that way we would have estimates for a large number of points closely placed in time. This however incurrs high computation cost and hence the chances of actuator values not available when they are needed. As a tradeoff, N and dt need to be wisely chosen to balance accuracy against computation cost.
+
+The values tried for the project were as follows:
+1. N = 30 dt = 0.1 --> this led to inaccurate predictions and the car used to wander off the road
+2. N = 10 dt = 0.2 --> with this combination the car maneuvered well and stayed on the road but during acute turns, the car was not very stable
+3. N = 10 dt = 0.1 --> Stability was still a problem as the model could not predict future values properly and stayed unstable around acute turns
+4. N = 20 dt = 0.1 --> The car appears stable and handles turns better than the previous combinations
+
 ### Handling Latency
 To handle the latency involved in actuator controls taking effect, the delta and acceleration variables need to be constrained. 
 
