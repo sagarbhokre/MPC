@@ -107,8 +107,13 @@ update_params utility allows setting the gain parameters on the go while the con
 -q -- d_a gain parameter
 ```
 
+Following script is used to reset the gaming environment.
 
+Dependencies: sudo pip install python-xlib; sudo pip install pyautogui
+```
 ./restart_game
+```
+Also note, the coordinates mentioned in the script need to be changed depending on the location of the simulator window and the previous/next/select buttons in it.
 
 ---
 
