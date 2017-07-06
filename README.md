@@ -1,6 +1,11 @@
 # CarND-Controls-MPC
 Self-Driving Car Engineer Nanodegree Program
 
+
+Preview of MPC controller execution:
+
+[![EXECUTION_PREVIEW](http://img.youtube.com/vi/fU2nVTVhmmU/0.jpg)](https://youtu.be/fU2nVTVhmmU "MPC controller")
+
 ## Implementation details
 The controller uses a predictive model to control the actuators inside the sdc simulator. Steering actuator and throttle actuator are computed using IpOpt module. The IpOpt module considers the current state and the coefficients to be fit while trying to reduce the cost values.
 
