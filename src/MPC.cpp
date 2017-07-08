@@ -7,7 +7,7 @@
 using CppAD::AD;
 
 // Set the timestep length and duration
-size_t N = 20;
+size_t N = 10;
 double dt = 0.1;
 
 double latency = 0.10;//100; //(sec)
@@ -42,13 +42,13 @@ size_t a_start = delta_start + N - 1;
 // The reference velocity is set to 40 mph.
 double ref_v = 50;
 
-#define GAIN_C (1500)
-#define GAIN_E (3000)
-#define GAIN_V (0.14)
-#define GAIN_D (30000)
-#define GAIN_A (80)
-#define GAIN_DD (290)
-#define GAIN_DA (50)
+#define GAIN_C (1000)
+#define GAIN_E (6000)
+#define GAIN_V (1)
+#define GAIN_D (600)
+#define GAIN_A (1)
+#define GAIN_DD (800)
+#define GAIN_DA (1)
 
 static void read_params(double &gain_c, double &gain_e, double &gain_v, double &gain_d, double &gain_a, double &gain_dd, double &gain_da)
 {
@@ -235,8 +235,8 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
   // degrees (values in radians).
   // NOTE: Feel free to change this to something else.
   for (unsigned int i = delta_start; i < a_start; i++) {
-    vars_lowerbound[i] = -0.436332*Lf;
-    vars_upperbound[i] = 0.436332*Lf;
+    vars_lowerbound[i] = -0.436332;
+    vars_upperbound[i] = 0.436332;
 
     if(i < delta_start + latency_iter) {
       vars_lowerbound[i] = delta_prev;
