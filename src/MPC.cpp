@@ -15,7 +15,7 @@ unsigned int latency_iter = latency/dt;
 
 
 double delta_prev = 0.0;
-double a_prev = 0.0;
+double a_prev = 0.1;
 
 // This value assumes the model presented in the classroom is used.
 //
@@ -42,10 +42,10 @@ size_t a_start = delta_start + N - 1;
 // The reference velocity is set to 40 mph.
 double ref_v = 50;
 
-#define GAIN_C (1000)
-#define GAIN_E (6000)
+#define GAIN_C (1)
+#define GAIN_E (1)
 #define GAIN_V (1)
-#define GAIN_D (600)
+#define GAIN_D (1)
 #define GAIN_A (1)
 #define GAIN_DD (800)
 #define GAIN_DA (1)
